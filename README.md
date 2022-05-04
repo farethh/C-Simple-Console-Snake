@@ -1,2 +1,2 @@
 # C-Simple-Console-Snake
-Hi,
+Hi, it's my first game I hope you will like it

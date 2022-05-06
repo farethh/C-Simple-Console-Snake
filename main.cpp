@@ -6,7 +6,7 @@
 
 using namespace std;
 
-char event_direction()  /// Zdarzenie czy zosta≥ zmieniony kierunek
+char event_direction()  /// Zdarzenie czy zosta≈Ç zmieniony kierunek
 {
     if (_kbhit())
     {
@@ -35,13 +35,10 @@ void clear_screen()
 
 void move_direction(char num, COORD& head, int snake_lenght, COORD tail[], HANDLE hConsole, bool& game, int& back) /// Poruszanie sie
 {
-    for (int i = 0; i < snake_lenght; i++)
-    {
-        tail[snake_lenght - i].X = tail[snake_lenght - i - 1].X;
-        tail[snake_lenght - i].Y = tail[snake_lenght - i - 1].Y;
-    }
-    tail[0].X = head.X;
-    tail[0].Y = head.Y;
+    for (int i = snake_lenght; i > 0; i--)
+        tail[i] = tail[i - 1];
+
+    tail[0] = head;
 
     switch (num) /// zakaz cofania 
     {
@@ -105,7 +102,7 @@ void move_direction(char num, COORD& head, int snake_lenght, COORD tail[], HANDL
     }
 }
 
-void out_of_map(COORD &head, bool& game) /// czy gracz jest poza mapπ
+void out_of_map(COORD &head, bool& game) /// czy gracz jest poza mapƒÖ
 {   
     if (head.X > 38 ) head.X = 15;
     if ( head.X < 15 ) head.X = 38;
@@ -137,7 +134,7 @@ void draw_map(HANDLE hConsole)  /// rysowanie mapy
     cout << "##########################";
 }
 
-void game_over(COORD score, int points) /// koniec gry / ile punktow
+void game_over(COORD score) /// koniec gry / ile punktow
 {
     score.X = 67; score.Y = 13;
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), score);
@@ -154,7 +151,7 @@ void gen_fruit(COORD& fruit, COORD head, HANDLE hConsole, int& points, int& snak
         {
             fruit.X = rand() % 22 + 15;
             fruit.Y = rand() % 27 + 2;
-            i = 0;
+            i = -1;
         }
     }
 
@@ -169,7 +166,7 @@ void gen_fruit(COORD& fruit, COORD head, HANDLE hConsole, int& points, int& snak
         fruit.Y = rand() % 27 + 2;
         snake_lenght++;
         points++;
-        time_sleep *= 1, 1;
+        time_sleep *= 0.99;
 
     }
 }
@@ -214,11 +211,9 @@ int main()
         out_of_map(head, game);
 
         if (_kbhit())
-            move_direction(num = event_direction(), head, snake_lenght, tail, hConsole, game, back);
-        else
-        {
-            move_direction(num, head, snake_lenght, tail, hConsole, game, back);
-        }
+            num = event_direction();
+
+        move_direction(num, head, snake_lenght, tail, hConsole, game, back);
 
         gen_fruit(fruit, head, hConsole, points, snake_lenght, time_sleep, tail);
         points_val(points, score);
@@ -228,5 +223,5 @@ int main()
         cout <<"      TIME:  " << t2 / CLOCKS_PER_SEC;
 
     } while (game);
-    game_over(score, points);
+    game_over(score);
 }
